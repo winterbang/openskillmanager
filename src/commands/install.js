@@ -169,52 +169,13 @@ async function downloadZip(url, destPath) {
 
 /**
  * 下载仓库中的子目录
- * 使用 svn export 来下载特定目录（Git 不支持直接下载子目录）
+ * 克隆整个仓库，然后只复制需要的子目录
  * @param {string} repoPath - 仓库地址
  * @param {string} subPath - 子目录路径
  * @param {string} destPath - 目标路径
  */
 async function downloadSubdirectory(repoPath, subPath, destPath) {
   console.log(`📥 下载仓库子目录...`);
-  
-  // 将 Git 地址转换为 GitHub SVN 地址
-  // https://github.com/user/repo.git -> https://github.com/user/repo/trunk/path
-  const svnUrl = repoPath
-    .replace(/\.git$/, '')
-    .replace('https://github.com/', 'https://github.com/')
-    + '/trunk/' + subPath;
-  
-  console.log(`🔗 SVN 地址: ${svnUrl}`);
-  
-  try {
-    // 检查 svn 是否可用
-    execSync('which svn', { stdio: 'pipe' });
-  } catch {
-    // svn 不可用，使用替代方案：克隆整个仓库然后复制子目录
-    console.log(`⚠️  svn 未安装，使用替代方案...`);
-    await downloadSubdirectoryFallback(repoPath, subPath, destPath);
-    return;
-  }
-  
-  try {
-    // 使用 svn export 下载特定目录
-    execSync(`svn export "${svnUrl}" "${destPath}"`, {
-      stdio: 'pipe',
-      timeout: 120000
-    });
-  } catch (error) {
-    throw new Error(`下载子目录失败: ${error.message}`);
-  }
-}
-
-/**
- * 下载子目录的替代方案
- * 克隆整个仓库，然后只复制需要的子目录
- * @param {string} repoPath - 仓库地址
- * @param {string} subPath - 子目录路径
- * @param {string} destPath - 目标路径
- */
-async function downloadSubdirectoryFallback(repoPath, subPath, destPath) {
   const tempDir = join(destPath, '..', `temp-repo-${Date.now()}`);
   
   try {
