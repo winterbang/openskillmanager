@@ -44,11 +44,58 @@ export async function installSkill(skillInput, sourceUrl) {
 }
 
 /**
+ * 获取 Registry 配置
+ * @returns {Object} { baseUrl, type, proxy }
+ */
+function getRegistryConfig() {
+  const defaultRegistry = getConfig('install.default_registry') || 'github';
+  const githubProxy = getConfig('install.github_proxy') || '';
+  
+  // 内置 Registry 配置
+  const registries = {
+    github: {
+      baseUrl: githubProxy || 'https://github.com',
+      type: 'github',
+      proxy: githubProxy
+    },
+    gitlab: {
+      baseUrl: 'https://gitlab.com',
+      type: 'gitlab',
+      proxy: null
+    },
+    gitee: {
+      baseUrl: 'https://gitee.com',
+      type: 'gitee',
+      proxy: null
+    }
+  };
+  
+  // 如果 defaultRegistry 是内置的，返回配置
+  if (registries[defaultRegistry]) {
+    return registries[defaultRegistry];
+  }
+  
+  // 如果是自定义 URL（如 https://my-git.com）
+  if (defaultRegistry.startsWith('http')) {
+    return {
+      baseUrl: defaultRegistry.replace(/\/$/, ''), // 移除末尾斜杠
+      type: 'custom',
+      proxy: null
+    };
+  }
+  
+  // 未知 registry，默认使用 github
+  console.warn(`⚠️  未知的 registry: ${defaultRegistry}，使用默认的 github`);
+  return registries.github;
+}
+
+/**
  * 解析 Skill 输入
  * 支持格式：
  * - user/repo
  * - user/repo/path/to/skill
- * - https://github.com/user/repo/tree/main/path/to/skill (完整 GitHub URL)
+ * - user/repo/tree/main/path/to/skill (带分支的简写)
+ * - https://github.com/user/repo/tree/main/path/to/skill (完整 URL)
  * @param {string} input - 用户输入
  * @param {string} sourceUrl - 自定义源地址
  * @returns {Object} { repoPath, subPath, skillName }
@@ -63,17 +110,20 @@ function parseSkillInput(input, sourceUrl) {
     };
   }
   
-  // 检查是否是完整的 GitHub URL
-  // 格式: https://github.com/user/repo/tree/branch/path/to/folder
-  const githubUrlRegex = /https:\/\/github\.com\/([^\/]+)\/([^\/]+)\/(tree|blob)\/([^\/]+)(?:\/(.+))?/;
-  const urlMatch = input.match(githubUrlRegex);
+  // 获取 Registry 配置
+  const registry = getRegistryConfig();
+  
+  // 检查是否是完整的 Git URL（各种平台）
+  // 格式: https://host.com/user/repo/tree/branch/path/to/folder
+  const gitUrlRegex = /https:\/\/([^\/]+)\/([^\/]+)\/([^\/]+)\/(tree|blob)\/([^\/]+)(?:\/(.+))?/;
+  const urlMatch = input.match(gitUrlRegex);
   
   if (urlMatch) {
-    const [, user, repo, , branch, subPath] = urlMatch;
+    const [, host, user, repo, , branch, subPath] = urlMatch;
     const skillName = subPath ? basename(subPath) : repo;
     
     return {
-      repoPath: `https://github.com/${user}/${repo}.git`,
+      repoPath: `https://${host}/${user}/${repo}.git`,
       subPath: subPath || null,
       skillName: skillName
     };
@@ -85,7 +135,7 @@ function parseSkillInput(input, sourceUrl) {
   if (parts.length === 2) {
     // 标准格式: user/repo
     return {
-      repoPath: `https://github.com/${input}.git`,
+      repoPath: `${registry.baseUrl}/${input}.git`,
       subPath: null,
       skillName: parts[1]
     };
@@ -117,12 +167,12 @@ function parseSkillInput(input, sourceUrl) {
     }
     
     return {
-      repoPath: `https://github.com/${user}/${repo}.git`,
+      repoPath: `${registry.baseUrl}/${user}/${repo}.git`,
       subPath: subPath,
       skillName: skillName
     };
   } else {
-    throw new Error(`无效的 Skill 格式: ${input}。请使用 "user/repo"、"user/repo/path/to/skill" 或完整的 GitHub URL`);
+    throw new Error(`无效的 Skill 格式: ${input}。请使用 "user/repo"、"user/repo/path/to/skill" 或完整的 Git 仓库 URL`);
   }
 }
 

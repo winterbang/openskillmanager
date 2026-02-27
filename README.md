@@ -156,6 +156,41 @@ skill-name/
 
 你可以通过 `osm config set link_targets` 自定义需要创建软链的目录。
 
+### Registry 配置
+
+`install.default_registry` 支持以下值：
+
+| Registry | 说明 | 示例 |
+|----------|------|------|
+| `github` | GitHub（默认） | `osm install user/repo` → 从 github.com 安装 |
+| `gitlab` | GitLab | `osm install user/repo` → 从 gitlab.com 安装 |
+| `gitee` | Gitee（码云） | `osm install user/repo` → 从 gitee.com 安装 |
+| 自定义 URL | 自托管 Git 服务 | `https://git.mycompany.com` |
+
+**使用 GitHub 代理：**
+
+如果访问 GitHub 较慢，可以配置代理：
+
+```bash
+# 使用镜像代理（如 ghproxy.com）
+osm config set install.github_proxy "https://ghproxy.com/https://github.com"
+
+# 恢复直连
+osm config set install.github_proxy ""
+```
+
+**切换 Registry 示例：**
+
+```bash
+# 切换到 Gitee
+osm config set install.default_registry "gitee"
+osm install user/repo  # 将从 gitee.com 安装
+
+# 切换到自托管 GitLab
+osm config set install.default_registry "https://git.mycompany.com"
+osm install user/repo  # 将从自托管服务器安装
+```
+
 ## 安装流程
 
 用户触发 `osm install` 后，系统按以下顺序执行：
