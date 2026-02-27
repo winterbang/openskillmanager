@@ -1,8 +1,10 @@
 import { execSync } from 'child_process';
-import { existsSync, ensureDir, remove, ensureSymlink, readFileSync } from 'fs-extra';
+import fs from 'fs-extra';
 import { join, basename } from 'path';
 import { getConfig, readConfig } from './config.js';
 import { resolveHomePath } from '../utils/path.js';
+
+const { existsSync, ensureDir, remove, ensureSymlink, readFileSync } = fs;
 
 /**
  * 安装 Skill
