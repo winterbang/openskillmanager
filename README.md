@@ -136,6 +136,62 @@ skill-name/
   - `commander` - CLI 路由与参数解析
   - `fs-extra` - 文件读写、目录创建及跨平台软链操作
 
+## 开发说明
+
+### 项目结构
+
+```
+osm/
+├── bin/
+│   └── osm.js              # CLI 入口文件
+├── src/
+│   ├── commands/
+│   │   ├── install.js      # install 命令实现
+│   │   └── config.js       # config 命令实现
+│   └── utils/
+│       └── path.js         # 路径处理工具
+├── package.json
+└── README.md
+```
+
+### 本地开发
+
+```bash
+# 克隆仓库
+git clone https://github.com/winterbang/openskillmanager.git
+cd openskillmanager
+
+# 安装依赖
+npm install
+
+# 链接到全局（本地测试）
+npm link
+
+# 测试命令
+osm --version
+osm config list
+```
+
+### 添加新命令
+
+1. 在 `src/commands/` 下创建命令文件
+2. 在 `bin/osm.js` 中使用 `program.command()` 注册命令
+3. 遵循现有命令的错误处理模式
+
+### 发布到 npm
+
+```bash
+# 登录 npm
+npm login
+
+# 发布
+npm publish
+
+# 更新版本
+npm version patch|minor|major
+npm publish
+```
+
 ## License
 
 MIT
