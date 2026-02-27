@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { installSkill } from '../src/commands/install.js';
 import { configManager } from '../src/commands/config.js';
+import { syncSkills } from '../src/commands/sync.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -43,6 +44,19 @@ program
       await configManager(action, key, value);
     } catch (error) {
       console.error(`❌ 配置操作失败: ${error.message}`);
+      process.exit(1);
+    }
+  });
+
+// sync 命令
+program
+  .command('sync')
+  .description('同步所有 Skill 到配置的软链目录')
+  .action(async () => {
+    try {
+      await syncSkills();
+    } catch (error) {
+      console.error(`❌ 同步失败: ${error.message}`);
       process.exit(1);
     }
   });
