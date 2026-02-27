@@ -1,0 +1,141 @@
+# OpenSkillManager (osm)
+
+AI Agent Skill 包管理器 - 统一管理、分发你的 AI Skills。
+
+## 简介
+
+OpenSkillManager (简称 osm) 是一个基于 Node.js 开发的全局命令行界面 (CLI) 工具。它的核心定位是作为 AI Agent（如 Claude、Codex 等）的"Skill 包管理器"，类似于 Node 生态中的 npm 或 Python 生态中的 pip。
+
+## 解决痛点
+
+随着 AI 驱动开发的普及，开发者通常需要在多个 AI 工具或工作流之间复用特定的 Prompt、脚本和配置文件（即 Skill）。手动复制粘贴或管理这些离散文件不仅低效，而且难以保持版本一致性。osm 通过"统一存储 + 动态软链分发"的机制，彻底解决多终端、多环境下的 Skill 同步与管理问题。
+
+## 安装
+
+```bash
+npm install -g openskillmanager
+```
+
+## 快速开始
+
+### 1. 安装 Skill
+
+从 GitHub 安装：
+```bash
+osm install username/skill-name
+```
+
+从自定义源安装：
+```bash
+osm install my-skill -s https://github.com/user/repo.git
+osm install my-skill -s https://example.com/skill.zip
+```
+
+### 2. 配置管理
+
+查看配置：
+```bash
+osm config list
+```
+
+获取配置项：
+```bash
+osm config get store_path
+osm config get link_targets
+```
+
+设置配置项：
+```bash
+osm config set store_path ~/.my_skills
+osm config set system.auto_overwrite_links true
+```
+
+### 3. 查看版本
+
+```bash
+osm -v
+osm --version
+```
+
+### 4. 帮助
+
+```bash
+osm -h
+osm --help
+```
+
+## 核心概念
+
+### Skill 规范
+
+一个标准的 Skill 必须是一个包含特定结构的文件夹：
+
+```
+skill-name/
+├── SKILL.md              # 【必填】Skill 的核心描述或 Prompt
+├── scripts/              # 【选填】执行脚本目录
+│   ├── deploy.sh
+│   └── validate.py
+├── references/           # 【选填】参考资料或上下文文档
+│   └── REFERENCE.md
+└── assets/               # 【选填】静态资源或配置模板
+    └── config-template.json
+```
+
+### 统一存储与分发 (Symlink 机制)
+
+- **统一存储库**：所有通过工具下载的 Skill 实体文件，统一存放在 `~/.open_skills` 文件夹中。
+- **动态分发**：工具读取配置文件中定义的 `link_targets`（如 `~/.claude`），并在其内部的 `skills/` 子目录中创建指向统一存储库中对应 Skill 的软链接（Symlink）。
+
+## 配置说明
+
+配置文件位于 `~/.osmrc`，JSON 格式：
+
+```json
+{
+  "store_path": "~/.open_skills",
+  "link_targets": [
+    "~/.claude",
+    "~/.codex"
+  ],
+  "install": {
+    "default_registry": "github",
+    "github_proxy": ""
+  },
+  "system": {
+    "auto_overwrite_links": false,
+    "log_level": "info"
+  }
+}
+```
+
+### 配置项说明
+
+| 配置项 | 说明 | 默认值 |
+|--------|------|--------|
+| `store_path` | Skill 统一存储路径 | `~/.open_skills` |
+| `link_targets` | 软链接目标目录列表 | `["~/.claude", "~/.codex"]` |
+| `install.default_registry` | 默认注册表 | `github` |
+| `install.github_proxy` | GitHub 代理地址 | `""` |
+| `system.auto_overwrite_links` | 自动覆盖已存在的链接 | `false` |
+| `system.log_level` | 日志级别 | `info` |
+
+## 安装流程
+
+用户触发 `osm install` 后，系统按以下顺序执行：
+
+1. **解析源地址**：根据用户输入的参数，决定是拼接 GitHub 地址还是使用提供的 `--source` URL。
+2. **拉取文件**：将目标项目克隆或下载解压至 `~/.open_skills/<skill-name>`。
+3. **合法性校验**：检查下载的目录中是否存在 `SKILL.md` 文件。若缺失，则中断安装并清理残余文件。
+4. **软链注入**：遍历 `~/.osmrc` 中的 `link_targets` 列表，在目标目录创建软链接。
+
+## 技术栈
+
+- **开发语言**：Node.js (ES Modules)
+- **核心依赖**：
+  - `commander` - CLI 路由与参数解析
+  - `fs-extra` - 文件读写、目录创建及跨平台软链操作
+
+## License
+
+MIT

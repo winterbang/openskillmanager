@@ -1,0 +1,31 @@
+{
+  "name": "openskillmanager",
+  "version": "1.0.0",
+  "description": "OpenSkillManager (osm) - AI Agent Skill 包管理器",
+  "main": "src/index.js",
+  "type": "module",
+  "bin": {
+    "osm": "./bin/osm.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "skill",
+    "manager",
+    "cli",
+    "ai",
+    "agent",
+    "claude",
+    "codex"
+  ],
+  "author": "winterbang",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^12.0.0",
+    "fs-extra": "^11.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
