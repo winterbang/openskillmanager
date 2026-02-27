@@ -13,7 +13,7 @@ OpenSkillManager (简称 osm) 是一个基于 Node.js 开发的全局命令行�
 ## 安装
 
 ```bash
-npm install -g openskillmanager
+npm install -g open-skill-manager
 ```
 
 ## 快速开始

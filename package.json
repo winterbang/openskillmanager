@@ -1,5 +1,5 @@
 {
-  "name": "openskillmanager",
+  "name": "open-skill-manager",
   "version": "1.0.0",
   "description": "OpenSkillManager (osm) - AI Agent Skill 包管理器",
   "main": "src/index.js",
