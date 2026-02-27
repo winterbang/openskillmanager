@@ -25,6 +25,15 @@ npm install -g openskillmanager
 osm install username/skill-name
 ```
 
+从 GitHub 仓库的子目录安装：
+```bash
+# 安装仓库中特定文件夹作为 Skill
+osm install username/repo-name/path/to/skill
+
+# 示例：安装 baoyu-skills 仓库中的某个 skill
+osm install jimliu/baoyu-skills/skills/baoyu-image-gen
+```
+
 从自定义源安装：
 ```bash
 osm install my-skill -s https://github.com/user/repo.git
