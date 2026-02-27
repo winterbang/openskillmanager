@@ -32,6 +32,10 @@ osm install username/repo-name/path/to/skill
 
 # 示例：安装 baoyu-skills 仓库中的某个 skill
 osm install jimliu/baoyu-skills/skills/baoyu-image-gen
+
+# 支持 tree/branch 格式（适用于 GitHub URL 或简写）
+osm install username/repo-name/tree/main/path/to/skill
+osm install https://github.com/username/repo-name/tree/main/path/to/skill
 ```
 
 从自定义源安装：
@@ -105,7 +109,13 @@ skill-name/
   "store_path": "~/.open_skills",
   "link_targets": [
     "~/.claude",
-    "~/.codex"
+    "~/.agents",
+    "~/.cursor",
+    "~/.gemini",
+    "~/.gemini/antigravity",
+    "~/.copilot",
+    "~/.config/opencode",
+    "~/.codeium/windsurf"
   ],
   "install": {
     "default_registry": "github",
@@ -123,11 +133,28 @@ skill-name/
 | 配置项 | 说明 | 默认值 |
 |--------|------|--------|
 | `store_path` | Skill 统一存储路径 | `~/.open_skills` |
-| `link_targets` | 软链接目标目录列表 | `["~/.claude", "~/.codex"]` |
+| `link_targets` | 软链接目标目录列表 | 见下方支持的 Agent 列表 |
 | `install.default_registry` | 默认注册表 | `github` |
 | `install.github_proxy` | GitHub 代理地址 | `""` |
 | `system.auto_overwrite_links` | 自动覆盖已存在的链接 | `false` |
 | `system.log_level` | 日志级别 | `info` |
+
+### 支持的 Agent 软链目录
+
+安装 Skill 时，osm 会自动在以下 Agent 目录创建软链接（`{target}/skills/{skill-name}`）：
+
+| Agent | 软链目标目录 | Skill 最终路径 |
+|-------|-------------|---------------|
+| Claude Code | `~/.claude` | `~/.claude/skills/{skill}/` |
+| Codex | `~/.agents` | `~/.agents/skills/{skill}/` |
+| Cursor | `~/.cursor` | `~/.cursor/skills/{skill}/` |
+| Gemini CLI | `~/.gemini` | `~/.gemini/skills/{skill}/` |
+| Antigravity | `~/.gemini/antigravity` | `~/.gemini/antigravity/skills/{skill}/` |
+| GitHub Copilot | `~/.copilot` | `~/.copilot/skills/{skill}/` |
+| OpenCode | `~/.config/opencode` | `~/.config/opencode/skills/{skill}/` |
+| Windsurf | `~/.codeium/windsurf` | `~/.codeium/windsurf/skills/{skill}/` |
+
+你可以通过 `osm config set link_targets` 自定义需要创建软链的目录。
 
 ## 安装流程
 
@@ -178,6 +205,23 @@ npm link
 
 # 测试命令
 osm --version
+osm config list
+```
+
+### 重新安装/更新
+
+本地开发时，修改代码后需要重新链接：
+
+```bash
+# 1. 取消旧链接
+npm unlink -g openskillmanager
+
+# 2. 重新链接
+cd openskillmanager
+npm link
+
+# 3. 如需重置配置（让新的默认配置生效）
+rm ~/.osmrc
 osm config list
 ```
 

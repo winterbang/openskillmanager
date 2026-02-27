@@ -90,11 +90,31 @@ function parseSkillInput(input, sourceUrl) {
       skillName: parts[1]
     };
   } else if (parts.length > 2) {
-    // 带子路径格式: user/repo/path/to/skill
+    // 检查是否是包含 tree/{branch} 的格式
+    // 例如: user/repo/tree/main/path/to/skill
     const user = parts[0];
     const repo = parts[1];
-    const subPath = parts.slice(2).join('/');
-    const skillName = parts[parts.length - 1]; // 使用最后一级作为 skill 名称
+    
+    let subPath;
+    let skillName;
+    
+    if (parts.length >= 4 && parts[2] === 'tree') {
+      // 格式: user/repo/tree/branch/path/to/skill
+      // 跳过 'tree' 和 branch 名称，后面的才是真正的子路径
+      const branch = parts[3];
+      if (parts.length > 4) {
+        subPath = parts.slice(4).join('/');
+        skillName = parts[parts.length - 1];
+      } else {
+        // user/repo/tree/branch (没有子路径)
+        subPath = null;
+        skillName = repo;
+      }
+    } else {
+      // 普通带子路径格式: user/repo/path/to/skill
+      subPath = parts.slice(2).join('/');
+      skillName = parts[parts.length - 1];
+    }
     
     return {
       repoPath: `https://github.com/${user}/${repo}.git`,
@@ -151,7 +171,7 @@ async function cloneGitRepo(url, destPath) {
   try {
     execSync(`git clone --depth 1 "${url}" "${destPath}"`, {
       stdio: 'pipe',
-      timeout: 60000
+      timeout: 180000  // 3分钟超时
     });
   } catch (error) {
     throw new Error(`克隆仓库失败: ${error.message}`);
@@ -200,7 +220,7 @@ async function downloadSubdirectory(repoPath, subPath, destPath) {
     console.log(`📥 克隆完整仓库...`);
     execSync(`git clone --depth 1 "${repoPath}" "${tempDir}"`, {
       stdio: 'pipe',
-      timeout: 60000
+      timeout: 180000  // 3分钟超时
     });
     
     // 检查子目录是否存在

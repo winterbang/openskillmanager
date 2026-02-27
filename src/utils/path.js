@@ -26,7 +26,13 @@ export function getDefaultConfig() {
     store_path: '~/.open_skills',
     link_targets: [
       '~/.claude',
-      '~/.codex'
+      '~/.agents',
+      '~/.cursor',
+      '~/.gemini',
+      '~/.gemini/antigravity',
+      '~/.copilot',
+      '~/.config/opencode',
+      '~/.codeium/windsurf'
     ],
     install: {
       default_registry: 'github',
