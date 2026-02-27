@@ -48,6 +48,7 @@ export async function installSkill(skillInput, sourceUrl) {
  * 支持格式：
  * - user/repo
  * - user/repo/path/to/skill
+ * - https://github.com/user/repo/tree/main/path/to/skill (完整 GitHub URL)
  * @param {string} input - 用户输入
  * @param {string} sourceUrl - 自定义源地址
  * @returns {Object} { repoPath, subPath, skillName }
@@ -62,7 +63,23 @@ function parseSkillInput(input, sourceUrl) {
     };
   }
   
-  // 解析输入路径
+  // 检查是否是完整的 GitHub URL
+  // 格式: https://github.com/user/repo/tree/branch/path/to/folder
+  const githubUrlRegex = /https:\/\/github\.com\/([^\/]+)\/([^\/]+)\/(tree|blob)\/([^\/]+)(?:\/(.+))?/;
+  const urlMatch = input.match(githubUrlRegex);
+  
+  if (urlMatch) {
+    const [, user, repo, , branch, subPath] = urlMatch;
+    const skillName = subPath ? basename(subPath) : repo;
+    
+    return {
+      repoPath: `https://github.com/${user}/${repo}.git`,
+      subPath: subPath || null,
+      skillName: skillName
+    };
+  }
+  
+  // 解析输入路径（简写格式）
   const parts = input.split('/');
   
   if (parts.length === 2) {
@@ -85,7 +102,7 @@ function parseSkillInput(input, sourceUrl) {
       skillName: skillName
     };
   } else {
-    throw new Error(`无效的 Skill 格式: ${input}。请使用 "user/repo" 或 "user/repo/path/to/skill" 格式`);
+    throw new Error(`无效的 Skill 格式: ${input}。请使用 "user/repo"、"user/repo/path/to/skill" 或完整的 GitHub URL`);
   }
 }
 
