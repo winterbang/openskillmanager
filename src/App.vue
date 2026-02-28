@@ -145,11 +145,14 @@ const copySkillCommand = (skillName) => {
     <nav class="fixed top-0 left-0 right-0 z-50 glass-card border-b border-slate-200/50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
-          <div class="flex items-center gap-2">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center shadow-lg shadow-primary-500/30">
               <Package class="w-6 h-6 text-white" />
             </div>
-            <span class="font-bold text-xl text-slate-800">OSM</span>
+            <div class="flex flex-col">
+              <span class="font-bold text-lg text-slate-800 leading-tight">OpenSkillManager</span>
+              <span class="text-xs text-slate-500 font-medium tracking-wide">OSM</span>
+            </div>
           </div>
           <div class="hidden md:flex items-center gap-8">
             <a href="#features" class="text-slate-600 hover:text-primary-600 transition-colors">功能</a>
