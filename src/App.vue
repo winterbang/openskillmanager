@@ -326,8 +326,8 @@ const copySkillCommand = (skillName) => {
                 :key="index"
                 class="flex items-center gap-4 p-4 rounded-xl bg-slate-800/50 border border-slate-700"
               >
-                <code class="text-primary-400 font-mono text-sm">{{ item.cmd }}</code>
-                <span class="text-slate-400">{{ item.desc }}</span>
+                <code class="text-cyan-400 font-mono text-sm font-semibold">{{ item.cmd }}</code>
+                <span class="text-slate-300">{{ item.desc }}</span>
               </div>
             </div>
           </div>
@@ -338,19 +338,19 @@ const copySkillCommand = (skillName) => {
                 <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
                 <div class="w-3 h-3 rounded-full bg-green-500"></div>
               </div>
-              <pre class="text-sm leading-relaxed"><span class="text-slate-500">$</span> <span class="text-primary-400">osm</span> install buffett-analysis
-<span class="text-green-400">✓</span> 正在解析 buffett-analysis
-<span class="text-green-400">✓</span> 下载依赖...
-<span class="text-green-400">✓</span> 安装完成!
+              <pre class="text-sm leading-relaxed"><span class="text-slate-400">$</span> <span class="text-cyan-400 font-semibold">osm</span> <span class="text-white">install buffett-analysis</span>
+<span class="text-green-400">✓</span> <span class="text-slate-200">正在解析 buffett-analysis</span>
+<span class="text-green-400">✓</span> <span class="text-slate-200">下载依赖...</span>
+<span class="text-green-400">✓</span> <span class="text-slate-200">安装完成!</span>
 
-<span class="text-slate-500">$</span> <span class="text-primary-400">osm</span> sync
-<span class="text-blue-400">ℹ</span> 正在同步 12 个 skills...
-<span class="text-green-400">✓</span> 同步完成
+<span class="text-slate-400">$</span> <span class="text-cyan-400 font-semibold">osm</span> <span class="text-white">sync</span>
+<span class="text-blue-400">ℹ</span> <span class="text-slate-200">正在同步 12 个 skills...</span>
+<span class="text-green-400">✓</span> <span class="text-slate-200">同步完成</span>
 
-<span class="text-slate-500">$</span> <span class="text-primary-400">osm</span> list
-<span class="text-yellow-400">→</span> buffett-analysis  v1.0.0
-<span class="text-yellow-400">→</span> a-stock-monitor   v1.1.2
-<span class="text-yellow-400">→</span> skill-creator     v0.1.0</pre>
+<span class="text-slate-400">$</span> <span class="text-cyan-400 font-semibold">osm</span> <span class="text-white">list</span>
+<span class="text-yellow-400">→</span> <span class="text-white">buffett-analysis  v1.0.0</span>
+<span class="text-yellow-400">→</span> <span class="text-white">a-stock-monitor   v1.1.2</span>
+<span class="text-yellow-400">→</span> <span class="text-white">skill-creator     v0.1.0</span></pre>
             </div>
           </div>
         </div>
