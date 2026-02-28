@@ -1,138 +1,138 @@
 # OpenSkillManager (osm)
 
-AI Agent Skill 包管理器 - 统一管理、分发你的 AI Skills。
+AI Agent Skill Package Manager - Unified management and distribution of your AI Skills.
 
-## 简介
+## Introduction
 
-OpenSkillManager (简称 osm) 是一个基于 Node.js 开发的全局命令行界面 (CLI) 工具。它的核心定位是作为 AI Agent（如 Claude、Codex 等）的"Skill 包管理器"，类似于 Node 生态中的 npm 或 Python 生态中的 pip。
+OpenSkillManager (abbreviated as osm) is a global command-line interface (CLI) tool developed based on Node.js. Its core positioning is to serve as a "Skill Package Manager" for AI Agents (such as Claude, Codex, etc.), similar to npm in the Node ecosystem or pip in the Python ecosystem.
 
-## 解决痛点
+## Pain Points Solved
 
-随着 AI 驱动开发的普及，开发者通常需要在多个 AI 工具或工作流之间复用特定的 Prompt、脚本和配置文件（即 Skill）。手动复制粘贴或管理这些离散文件不仅低效，而且难以保持版本一致性。osm 通过"统一存储 + 动态软链分发"的机制，彻底解决多终端、多环境下的 Skill 同步与管理问题。
+As AI-driven development becomes more prevalent, developers often need to reuse specific Prompts, scripts, and configuration files (i.e., Skills) across multiple AI tools or workflows. Manually copying and pasting or managing these discrete files is not only inefficient but also difficult to maintain version consistency. osm completely solves the multi-terminal, multi-environment Skill synchronization and management problem through a "unified storage + dynamic symlink distribution" mechanism.
 
-## 安装
+## Installation
 
 ```bash
 npm install -g open-skill-manager
 ```
 
-## 快速开始
+## Quick Start
 
-### 1. 安装 Skill
+### 1. Install Skill
 
-从 GitHub 安装：
+Install from GitHub:
 ```bash
 osm install username/skill-name
 ```
 
-从 GitHub 仓库的子目录安装：
+Install from a subdirectory of a GitHub repository:
 ```bash
-# 安装仓库中特定文件夹作为 Skill
+# Install a specific folder from a repository as a Skill
 osm install username/repo-name/path/to/skill
 
-# 示例：安装 baoyu-skills 仓库中的某个 skill
+# Example: Install a skill from the baoyu-skills repository
 osm install jimliu/baoyu-skills/skills/baoyu-image-gen
 
-# 支持 tree/branch 格式（适用于 GitHub URL 或简写）
+# Supports tree/branch format (works with GitHub URLs or shorthand)
 osm install username/repo-name/tree/main/path/to/skill
 osm install https://github.com/username/repo-name/tree/main/path/to/skill
 ```
 
-从自定义源安装：
+Install from a custom source:
 ```bash
 osm install my-skill -s https://github.com/user/repo.git
 osm install my-skill -s https://example.com/skill.zip
 ```
 
-### 2. 配置管理
+### 2. Configuration Management
 
-查看配置：
+View configuration:
 ```bash
 osm config list
 ```
 
-获取配置项：
+Get configuration item:
 ```bash
 osm config get store_path
 osm config get link_targets
 ```
 
-设置配置项：
+Set configuration item:
 ```bash
 osm config set store_path ~/.my_skills
 osm config set system.auto_overwrite_links true
 ```
 
-### 3. 查看版本
+### 3. Check Version
 
 ```bash
 osm -v
 osm --version
 ```
 
-### 4. 同步 Skills
+### 4. Sync Skills
 
-当你修改了 `link_targets` 配置（如添加了新的 Agent 目录），可以使用 sync 命令将所有已安装的 Skill 同步到新的目录：
+When you modify the `link_targets` configuration (e.g., add a new Agent directory), you can use the sync command to synchronize all installed Skills to the new directory:
 
 ```bash
-# 同步所有 Skill 到配置的软链目录
+# Sync all Skills to the configured symlink directories
 osm sync
 ```
 
-示例场景：
+Example scenario:
 ```bash
-# 1. 初始状态：只配置了 ~/.claude
-osm install user/skill-a  # 软链到 ~/.claude/skills/skill-a
+# 1. Initial state: only ~/.claude is configured
+osm install user/skill-a  # Symlinked to ~/.claude/skills/skill-a
 
-# 2. 添加新的 Agent 目录
+# 2. Add a new Agent directory
 osm config set link_targets '["~/.claude", "~/.cursor", "~/.gemini"]'
 
-# 3. 同步 - 将 skill-a 也链接到新添加的 ~/.cursor 和 ~/.gemini
+# 3. Sync - also link skill-a to the newly added ~/.cursor and ~/.gemini
 osm sync
-# 输出：
-# 🔄 开始同步 Skills...
-# 📦 发现 1 个 Skill(s): skill-a
-# 🔗 目标软链目录: 3 个
+# Output:
+# 🔄 Starting Skill sync...
+# 📦 Found 1 Skill(s): skill-a
+# 🔗 Target symlink directories: 3
 #
-# 📋 同步 Skill: skill-a
-#   ✅ ~/.claude: 已存在且指向正确
-#   ✅ ~/.cursor: 软链创建成功
-#   ✅ ~/.gemini: 软链创建成功
+# 📋 Syncing Skill: skill-a
+#   ✅ ~/.claude: already exists and points to the correct location
+#   ✅ ~/.cursor: symlink created successfully
+#   ✅ ~/.gemini: symlink created successfully
 ```
 
-### 5. 帮助
+### 5. Help
 
 ```bash
 osm -h
 osm --help
 ```
 
-## 核心概念
+## Core Concepts
 
-### Skill 规范
+### Skill Specification
 
-一个标准的 Skill 必须是一个包含特定结构的文件夹：
+A standard Skill must be a folder containing a specific structure:
 
 ```
 skill-name/
-├── SKILL.md              # 【必填】Skill 的核心描述或 Prompt
-├── scripts/              # 【选填】执行脚本目录
+├── SKILL.md              # [Required] Core description or Prompt of the Skill
+├── scripts/              # [Optional] Execution script directory
 │   ├── deploy.sh
 │   └── validate.py
-├── references/           # 【选填】参考资料或上下文文档
+├── references/           # [Optional] Reference materials or context documents
 │   └── REFERENCE.md
-└── assets/               # 【选填】静态资源或配置模板
+└── assets/               # [Optional] Static resources or configuration templates
     └── config-template.json
 ```
 
-### 统一存储与分发 (Symlink 机制)
+### Unified Storage and Distribution (Symlink Mechanism)
 
-- **统一存储库**：所有通过工具下载的 Skill 实体文件，统一存放在 `~/.open_skills` 文件夹中。
-- **动态分发**：工具读取配置文件中定义的 `link_targets`（如 `~/.claude`），并在其内部的 `skills/` 子目录中创建指向统一存储库中对应 Skill 的软链接（Symlink）。
+- **Unified Storage Repository**: All Skill files downloaded through the tool are uniformly stored in the `~/.open_skills` folder.
+- **Dynamic Distribution**: The tool reads the `link_targets` defined in the configuration file (e.g., `~/.claude`) and creates symlinks in the internal `skills/` subdirectory pointing to the corresponding Skill in the unified storage repository.
 
-## 配置说明
+## Configuration
 
-配置文件位于 `~/.osmrc`，JSON 格式：
+The configuration file is located at `~/.osmrc` in JSON format:
 
 ```json
 {
@@ -158,23 +158,23 @@ skill-name/
 }
 ```
 
-### 配置项说明
+### Configuration Options
 
-| 配置项 | 说明 | 默认值 |
-|--------|------|--------|
-| `store_path` | Skill 统一存储路径 | `~/.open_skills` |
-| `link_targets` | 软链接目标目录列表 | 见下方支持的 Agent 列表 |
-| `install.default_registry` | 默认注册表 | `github` |
-| `install.github_proxy` | GitHub 代理地址 | `""` |
-| `system.auto_overwrite_links` | 自动覆盖已存在的链接 | `false` |
-| `system.log_level` | 日志级别 | `info` |
+| Option | Description | Default Value |
+|--------|-------------|---------------|
+| `store_path` | Skill unified storage path | `~/.open_skills` |
+| `link_targets` | List of symlink target directories | See supported Agent list below |
+| `install.default_registry` | Default registry | `github` |
+| `install.github_proxy` | GitHub proxy address | `""` |
+| `system.auto_overwrite_links` | Auto-overwrite existing links | `false` |
+| `system.log_level` | Log level | `info` |
 
-### 支持的 Agent 软链目录
+### Supported Agent Symlink Directories
 
-安装 Skill 时，osm 会自动在以下 Agent 目录创建软链接（`{target}/skills/{skill-name}`）：
+When installing a Skill, osm will automatically create symlinks in the following Agent directories (`{target}/skills/{skill-name}`):
 
-| Agent | 软链目标目录 | Skill 最终路径 |
-|-------|-------------|---------------|
+| Agent | Symlink Target Directory | Final Skill Path |
+|-------|-------------------------|------------------|
 | Claude Code | `~/.claude` | `~/.claude/skills/{skill}/` |
 | Codex | `~/.agents` | `~/.agents/skills/{skill}/` |
 | Cursor | `~/.cursor` | `~/.cursor/skills/{skill}/` |
@@ -184,128 +184,128 @@ skill-name/
 | OpenCode | `~/.config/opencode` | `~/.config/opencode/skills/{skill}/` |
 | Windsurf | `~/.codeium/windsurf` | `~/.codeium/windsurf/skills/{skill}/` |
 
-你可以通过 `osm config set link_targets` 自定义需要创建软链的目录。
+You can customize the directories where symlinks are created via `osm config set link_targets`.
 
-### Registry 配置
+### Registry Configuration
 
-`install.default_registry` 支持以下值：
+`install.default_registry` supports the following values:
 
-| Registry | 说明 | 示例 |
-|----------|------|------|
-| `github` | GitHub（默认） | `osm install user/repo` → 从 github.com 安装 |
-| `gitlab` | GitLab | `osm install user/repo` → 从 gitlab.com 安装 |
-| `gitee` | Gitee（码云） | `osm install user/repo` → 从 gitee.com 安装 |
-| 自定义 URL | 自托管 Git 服务 | `https://git.mycompany.com` |
+| Registry | Description | Example |
+|----------|-------------|---------|
+| `github` | GitHub (default) | `osm install user/repo` → Install from github.com |
+| `gitlab` | GitLab | `osm install user/repo` → Install from gitlab.com |
+| `gitee` | Gitee | `osm install user/repo` → Install from gitee.com |
+| Custom URL | Self-hosted Git service | `https://git.mycompany.com` |
 
-**使用 GitHub 代理：**
+**Using GitHub Proxy:**
 
-如果访问 GitHub 较慢，可以配置代理：
+If accessing GitHub is slow, you can configure a proxy:
 
 ```bash
-# 使用镜像代理（如 ghproxy.com）
+# Use a mirror proxy (e.g., ghproxy.com)
 osm config set install.github_proxy "https://ghproxy.com/https://github.com"
 
-# 恢复直连
+# Restore direct connection
 osm config set install.github_proxy ""
 ```
 
-**切换 Registry 示例：**
+**Switching Registry Example:**
 
 ```bash
-# 切换到 Gitee
+# Switch to Gitee
 osm config set install.default_registry "gitee"
-osm install user/repo  # 将从 gitee.com 安装
+osm install user/repo  # Will install from gitee.com
 
-# 切换到自托管 GitLab
+# Switch to self-hosted GitLab
 osm config set install.default_registry "https://git.mycompany.com"
-osm install user/repo  # 将从自托管服务器安装
+osm install user/repo  # Will install from self-hosted server
 ```
 
-## 安装流程
+## Installation Process
 
-用户触发 `osm install` 后，系统按以下顺序执行：
+After the user triggers `osm install`, the system executes in the following order:
 
-1. **解析源地址**：根据用户输入的参数，决定是拼接 GitHub 地址还是使用提供的 `--source` URL。
-2. **拉取文件**：将目标项目克隆或下载解压至 `~/.open_skills/<skill-name>`。
-3. **合法性校验**：检查下载的目录中是否存在 `SKILL.md` 文件。若缺失，则中断安装并清理残余文件。
-4. **软链注入**：遍历 `~/.osmrc` 中的 `link_targets` 列表，在目标目录创建软链接。
+1. **Parse Source Address**: Based on the user's input parameters, decide whether to concatenate a GitHub address or use the provided `--source` URL.
+2. **Fetch Files**: Clone or download and extract the target project to `~/.open_skills/<skill-name>`.
+3. **Legitimacy Check**: Check if a `SKILL.md` file exists in the downloaded directory. If missing, interrupt the installation and clean up residual files.
+4. **Symlink Injection**: Traverse the `link_targets` list in `~/.osmrc` and create symlinks in the target directories.
 
-## 技术栈
+## Tech Stack
 
-- **开发语言**：Node.js (ES Modules)
-- **核心依赖**：
-  - `commander` - CLI 路由与参数解析
-  - `fs-extra` - 文件读写、目录创建及跨平台软链操作
+- **Development Language**: Node.js (ES Modules)
+- **Core Dependencies**:
+  - `commander` - CLI routing and parameter parsing
+  - `fs-extra` - File read/write, directory creation, and cross-platform symlink operations
 
-## 开发说明
+## Development Guide
 
-### 项目结构
+### Project Structure
 
 ```
 osm/
 ├── bin/
-│   └── osm.js              # CLI 入口文件
+│   └── osm.js              # CLI entry file
 ├── src/
 │   ├── commands/
-│   │   ├── install.js      # install 命令实现
-│   │   └── config.js       # config 命令实现
+│   │   ├── install.js      # install command implementation
+│   │   └── config.js       # config command implementation
 │   └── utils/
-│       └── path.js         # 路径处理工具
+│       └── path.js         # Path processing utilities
 ├── package.json
 └── README.md
 ```
 
-### 本地开发
+### Local Development
 
 ```bash
-# 克隆仓库
+# Clone the repository
 git clone https://github.com/winterbang/openskillmanager.git
 cd openskillmanager
 
-# 安装依赖
+# Install dependencies
 npm install
 
-# 链接到全局（本地测试）
+# Link to global (for local testing)
 npm link
 
-# 测试命令
+# Test commands
 osm --version
 osm config list
 ```
 
-### 重新安装/更新
+### Reinstall/Update
 
-本地开发时，修改代码后需要重新链接：
+During local development, you need to re-link after modifying the code:
 
 ```bash
-# 1. 取消旧链接
+# 1. Unlink old link
 npm unlink -g openskillmanager
 
-# 2. 重新链接
+# 2. Re-link
 cd openskillmanager
 npm link
 
-# 3. 如需重置配置（让新的默认配置生效）
+# 3. Reset configuration if needed (to let new default configuration take effect)
 rm ~/.osmrc
 osm config list
 ```
 
-### 添加新命令
+### Adding New Commands
 
-1. 在 `src/commands/` 下创建命令文件
-2. 在 `bin/osm.js` 中使用 `program.command()` 注册命令
-3. 遵循现有命令的错误处理模式
+1. Create a command file in `src/commands/`
+2. Register the command using `program.command()` in `bin/osm.js`
+3. Follow the error handling patterns of existing commands
 
-### 发布到 npm
+### Publishing to npm
 
 ```bash
-# 登录 npm
+# Login to npm
 npm login
 
-# 发布
+# Publish
 npm publish
 
-# 更新版本
+# Update version
 npm version patch|minor|major
 npm publish
 ```
@@ -313,3 +313,7 @@ npm publish
 ## License
 
 MIT
+
+---
+
+[中文文档](README.zh-CN.md)
