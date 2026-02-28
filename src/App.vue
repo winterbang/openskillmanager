@@ -13,14 +13,31 @@ import {
   Star,
   Command,
   CheckCircle2,
-  ArrowRight
+  ArrowRight,
+  FileText,
+  Globe,
+  TrendingUp,
+  BookOpen,
+  BarChart3
 } from 'lucide-vue-next'
 
 const isVisible = ref(false)
 const copied = ref(false)
+const copiedSkill = ref('')
 
+// Scroll animation
 onMounted(() => {
   isVisible.value = true
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animate-in')
+      }
+    })
+  }, { threshold: 0.1 })
+
+  document.querySelectorAll('.scroll-animate').forEach(el => observer.observe(el))
 })
 
 const copyInstall = () => {
@@ -74,6 +91,52 @@ const commands = [
   { cmd: 'osm list', desc: '列出已安装技能' },
   { cmd: 'osm config', desc: '配置管理' }
 ]
+
+// Simplified skills data
+const skills = [
+  {
+    name: 'github',
+    title: 'GitHub',
+    desc: '查看仓库信息、PR状态、Issue追踪',
+    icon: Github
+  },
+  {
+    name: 'weather',
+    title: '天气查询',
+    desc: '实时天气、天气预报、空气质量',
+    icon: Globe
+  },
+  {
+    name: 'feishu-doc',
+    title: '飞书文档',
+    desc: '读取和编辑飞书文档内容',
+    icon: FileText
+  },
+  {
+    name: 'feishu-wiki',
+    title: '飞书知识库',
+    desc: '访问和管理飞书知识库空间',
+    icon: BookOpen
+  },
+  {
+    name: 'buffett-analysis',
+    title: '巴菲特分析',
+    desc: '基于巴菲特理念的股票价值分析',
+    icon: TrendingUp
+  },
+  {
+    name: 'a-stock-monitor',
+    title: 'A股监控',
+    desc: '实时监控A股市场动态和预警',
+    icon: BarChart3
+  }
+]
+
+const copySkillCommand = (skillName) => {
+  navigator.clipboard.writeText(`osm add ${skillName}`)
+  copiedSkill.value = skillName
+  setTimeout(() => copiedSkill.value = '', 2000)
+}
 </script>
 
 <template>
@@ -90,6 +153,7 @@ const commands = [
           </div>
           <div class="hidden md:flex items-center gap-8">
             <a href="#features" class="text-slate-600 hover:text-primary-600 transition-colors">功能</a>
+            <a href="#skills" class="text-slate-600 hover:text-primary-600 transition-colors">Skills</a>
             <a href="#commands" class="text-slate-600 hover:text-primary-600 transition-colors">命令</a>
             <a href="https://www.npmjs.com/package/open-skill-manager" target="_blank" class="btn-primary flex items-center gap-2">
               <Download class="w-4 h-4" />
@@ -166,7 +230,7 @@ const commands = [
     </section>
 
     <!-- Features Section -->
-    <section id="features" class="py-20 lg:py-32">
+    <section id="features" class="py-20 lg:py-32 scroll-animate">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
           <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
@@ -193,8 +257,60 @@ const commands = [
       </div>
     </section>
 
+    <!-- Skills Section -->
+    <section id="skills" class="py-20 lg:py-32 bg-slate-900 scroll-animate">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+            热门 Skills
+          </h2>
+          <p class="text-lg text-slate-400 max-w-2xl mx-auto">
+            常用技能一键安装，立即增强您的 AI Agent
+          </p>
+        </div>
+
+        <!-- Skills Grid -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div
+            v-for="skill in skills"
+            :key="skill.name"
+            class="bg-slate-800 rounded-xl p-6 border border-slate-700 hover:border-slate-600 transition-all hover:-translate-y-1"
+          >
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-12 h-12 rounded-xl bg-slate-700 flex items-center justify-center">
+                <component :is="skill.icon" class="w-6 h-6 text-primary-400" />
+              </div>
+              <div>
+                <h3 class="font-semibold text-white">{{ skill.title }}</h3>
+                <p class="text-sm text-slate-400">{{ skill.name }}</p>
+              </div>
+            </div>
+
+            <p class="text-slate-400 text-sm mb-4">{{ skill.desc }}</p>
+
+            <div class="flex items-center justify-between pt-4 border-t border-slate-700">
+              <code class="text-sm text-slate-500 font-mono">osm add {{ skill.name }}</code>
+              <button
+                @click="copySkillCommand(skill.name)"
+                :class="[
+                  'flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-all',
+                  copiedSkill === skill.name
+                    ? 'bg-green-500/20 text-green-400'
+                    : 'bg-primary-500/20 text-primary-400 hover:bg-primary-500/30'
+                ]"
+              >
+                <CheckCircle2 v-if="copiedSkill === skill.name" class="w-4 h-4" />
+                <Terminal v-else class="w-4 h-4" />
+                {{ copiedSkill === skill.name ? '已复制' : '复制' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Commands Section -->
-    <section id="commands" class="py-20 lg:py-32 bg-slate-900">
+    <section id="commands" class="py-20 lg:py-32 bg-slate-950 scroll-animate">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid lg:grid-cols-2 gap-12 items-center">
           <div>
@@ -242,7 +358,7 @@ const commands = [
     </section>
 
     <!-- CTA Section -->
-    <section class="py-20 lg:py-32">
+    <section class="py-20 lg:py-32 scroll-animate">
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="glass-card rounded-3xl p-8 md:p-12 text-center">
           <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
