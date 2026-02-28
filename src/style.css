@@ -1,8 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import 'tailwindcss';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
 
 @layer base {
   html {
@@ -10,42 +11,85 @@
   }
   
   body {
-    @apply font-sans antialiased text-slate-800 bg-white;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #1e293b;
+    background: white;
   }
 }
 
 @layer components {
   .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-500 to-secondary-500;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to right, #0ea5e9, #8b5cf6);
   }
   
   .gradient-bg {
-    @apply bg-gradient-to-br from-primary-50 via-white to-secondary-50;
+    background: linear-gradient(to bottom right, #f0f9ff, white, #f5f3ff);
   }
   
   .glass-card {
-    @apply bg-white/80 backdrop-blur-xl border border-white/20 shadow-xl;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   }
   
   .btn-primary {
-    @apply px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white font-medium rounded-xl shadow-lg shadow-primary-500/25 hover:shadow-primary-500/40 hover:scale-105 transition-all duration-300;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(to right, #0ea5e9, #0284c7);
+    color: white;
+    font-weight: 500;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.25);
+    transition: all 0.3s;
+  }
+  
+  .btn-primary:hover {
+    box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.4);
+    transform: scale(1.05);
   }
   
   .btn-secondary {
-    @apply px-6 py-3 bg-white text-slate-700 font-medium rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-300;
+    padding: 0.75rem 1.5rem;
+    background: white;
+    color: #334155;
+    font-weight: 500;
+    border-radius: 0.75rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: all 0.3s;
+  }
+  
+  .btn-secondary:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border-color: #cbd5e1;
   }
   
   .feature-card {
-    @apply p-6 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    background: white;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: all 0.3s;
+  }
+  
+  .feature-card:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
   }
   
   .code-block {
-    @apply bg-slate-900 text-slate-50 p-4 rounded-xl font-mono text-sm overflow-x-auto;
-  }
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+    background: #0f172a;
+    color: #f8fafc;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    font-family: monospace;
+    font-size: 0.875rem;
+    overflow-x: auto;
   }
 }
